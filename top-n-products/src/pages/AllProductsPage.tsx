@@ -1,36 +1,34 @@
-// AllProductsPage.tsx
-
+// src/pages/AllProductsPage.tsx
 import React, { useEffect, useState } from 'react';
-import { fetchProducts } from '../services/productService'; // Ensure correct import path
-import ProductList from '../components/ProductList'; // Example component, adjust as needed
-import { Product } from '../types/Product'; // Ensure correct import path for Product type
+import { useParams } from 'react-router-dom';
+import ProductList from '../components/ProductList';
+import { fetchProducts } from '../services/productService';
+import { Product as ProductType } from '../types/Product';
 
 const AllProductsPage: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const company = 'AMZ'; // Replace with actual company name
-  const category = 'Laptop'; // Replace with actual category
-  const top = 10;
-  const minPrice = 1;
-  const maxPrice = 10000;
-  const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ...'; // Replace with your actual access token
+  const { company, category } = useParams<{ company?: string; category?: string }>() || { company: '', category: '' }; // Make company and category optional
+
+  const [products, setProducts] = useState<ProductType[]>([]);
 
   useEffect(() => {
-    const fetchAllProducts = async () => {
+    const loadProducts = async () => {
       try {
-        const fetchedProducts = await fetchProducts(company, category, top, minPrice, maxPrice, accessToken);
-        setProducts(fetchedProducts);
+        if (company && category) {
+          const fetchedProducts = await fetchProducts(company, category, 10, 1, 10000); // Example parameters
+          setProducts(fetchedProducts);
+        }
       } catch (error) {
         console.error('Error fetching products:', error);
       }
     };
 
-    fetchAllProducts();
-  }, []); // Empty dependency array ensures it runs once on component mount
+    loadProducts();
+  }, [company, category]);
 
   return (
     <div>
-      <h1>Top {top} {category}s sold on {company}</h1>
-      <ProductList products={products} /> {/* Example usage, adjust as per your component structure */}
+      <h1>Top 10 {category}s sold on {company}</h1>
+      <ProductList products={products} />
     </div>
   );
 };

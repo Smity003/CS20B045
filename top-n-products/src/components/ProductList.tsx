@@ -1,17 +1,28 @@
-// ProductList.tsx
 import React from 'react';
-import ProductCard from './ProductCard';
-import { Product } from '../types/Product';
 
-type Props = {
+interface Product {
+  productName: string;
+  price: number;
+  rating: number;
+  discount: number;
+  availability: string;
+}
+
+interface Props {
   products: Product[];
-};
+}
 
 const ProductList: React.FC<Props> = ({ products }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+    <div className="product-list">
+      {products.map((product, index) => (
+        <div key={index} className="product-card">
+          <h2>{product.productName}</h2>
+          <p>Price: ${product.price}</p>
+          <p>Rating: {product.rating}</p>
+          <p>Discount: {product.discount}%</p>
+          <p>Availability: {product.availability}</p>
+        </div>
       ))}
     </div>
   );

@@ -1,4 +1,4 @@
-// src/components/ProductCard.tsx
+// src/components/Product.tsx (or Product.tsx after renaming)
 import React from 'react';
 import { Product as ProductType } from '../types/Product';
 
@@ -6,15 +6,16 @@ interface Props {
   product: ProductType;
 }
 
-const ProductCard: React.FC<Props> = ({ product }) => {
+const Product: React.FC<Props> = ({ product }) => {
   return (
-    <div className="border p-4">
-      <h2 className="text-xl font-bold">{product.productName}</h2> {/* Adjust as needed */}
+    <div className="product-card">
+      <h2>{product.productName}</h2>
       <p>Price: ${product.price}</p>
       <p>Rating: {product.rating}</p>
       <p>Discount: {product.discount}%</p>
+      <p>Availability: {product.availability}</p>
     </div>
   );
 };
 
-export default ProductCard;
+export default Product;

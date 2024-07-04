@@ -1,11 +1,9 @@
-// types/Product.ts
-export type Product = {
-    id: string; 
-    name: string;
+// src/types/Product.ts
+export interface Product {
+    productName: string; // Assuming it's productName instead of name
     price: number;
     rating: number;
     discount: number;
-    availability: boolean; 
-    image: string; 
-  };
+    availability: string;
+  }
   
