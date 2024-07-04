@@ -1,34 +1,33 @@
-import React, { useEffect } from 'react';
+// ProductPage.tsx
+
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ProductDetails from '../components/ProductDetails';
-import { fetchProductById } from '../services/productService';
+import ProductDetails from '../components/ProductDetails'; // Adjust path as needed
+import { fetchProductById } from '../services/productService'; // Ensure correct import path
 
 const ProductPage: React.FC = () => {
-  const { productId } = useParams<{ productId?: string }>(); // Make productId optional with `?`
-  const [product, setProduct] = React.useState<any>(null);
+  const { productId } = useParams<{ productId?: string }>();
+  const [product, setProduct] = useState<any>(null); // Adjust type as per your product structure
 
   useEffect(() => {
     const loadProduct = async () => {
-      if (!productId) return; // Handle undefined case
-
-      const product = await fetchProductById(productId);
-      setProduct(product);
+      if (productId) {
+        const productData = await fetchProductById(productId);
+        setProduct(productData);
+      }
     };
 
     loadProduct();
   }, [productId]);
 
   if (!product) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Example loading state, adjust as needed
   }
 
   return (
     <div>
-      <h2>{product.name}</h2>
-      <p>Price: ${product.price}</p>
-      <p>Rating: {product.rating}</p>
-      <p>Discount: {product.discount}%</p>
-      <p>Availability: {product.availability ? 'In Stock' : 'Out of Stock'}</p>
+      <h1>Product Details</h1>
+      <ProductDetails product={product} /> {/* Example usage of ProductDetails component */}
     </div>
   );
 };

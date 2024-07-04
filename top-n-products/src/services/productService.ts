@@ -1,56 +1,74 @@
+// productService.ts
+
 import axios from 'axios';
-import { Product } from '../types/Product';
 
 const API_BASE_URL = 'http://20.244.56.144/test';
 
-const fetchProducts = async (company: string, category: string, top: number, minPrice: number, maxPrice: number): Promise<Product[]> => {
-  try {
-    const response = await axios.get(
-      `${API_BASE_URL}/companies/${company}/categories/${category}/products`, {
-        params: { top, minPrice, maxPrice },
-        timeout: 5000,
-      }
-    );
+/**
+ * Fetches a list of products based on given parameters from the API using Axios.
+ * @param company The name of the company from which to fetch products.
+ * @param category The category of products to fetch.
+ * @param top The number of top products to fetch.
+ * @param minPrice The minimum price range for products.
+ * @param maxPrice The maximum price range for products.
+ * @param accessToken Optional access token for authentication.
+ * @returns A promise that resolves to an array of product objects.
+ */
+const fetchProducts = async (
+  company: string,
+  category: string,
+  top: number,
+  minPrice: number,
+  maxPrice: number,
+  accessToken?: string
+): Promise<any[]> => {
+  const url = `${API_BASE_URL}/companies/${company}/categories/${category}/products`;
 
-    return response.data.map((product: any, index: number) => ({
-      id: `${company}-${category}-${product.productName}-${index}`, // Generate a unique ID
-      name: product.productName,
-      price: product.price,
-      rating: product.rating,
-      discount: product.discount,
-      availability: product.availability === 'yes',
-      image: 'https://via.placeholder.com/150', // Placeholder image
-    }));
-  } catch (error: unknown) { // Use unknown type
-    if (error instanceof Error) {
+  try {
+    const response = await axios.get(url, {
+      params: {
+        top,
+        minPrice,
+        maxPrice
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
       console.error(`Error fetching products: ${error.message}`);
     } else {
-      console.error(`Unknown error fetching products: ${error}`);
+      console.error(`Error fetching products: ${error}`);
     }
     return [];
   }
 };
 
-const fetchProductById = async (productId: string): Promise<Product | null> => {
+/**
+ * Fetches a single product by its ID from the API using Axios.
+ * @param productId The unique identifier of the product to fetch.
+ * @param accessToken Optional access token for authentication.
+ * @returns A promise that resolves to the product object or null if not found.
+ */
+const fetchProductById = async (productId: string, accessToken?: string): Promise<any | null> => {
+  const url = `${API_BASE_URL}/products/${productId}`;
+
   try {
-    const response = await axios.get(`${API_BASE_URL}/products/${productId}`);
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
 
-    const product: Product = {
-      id: response.data.id, // Assuming response contains product ID
-      name: response.data.name,
-      price: response.data.price,
-      rating: response.data.rating,
-      discount: response.data.discount,
-      availability: response.data.availability === 'yes',
-      image: 'https://via.placeholder.com/150', // Placeholder image
-    };
-
-    return product;
-  } catch (error: unknown) { // Use unknown type
-    if (error instanceof Error) {
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
       console.error(`Error fetching product by ID: ${error.message}`);
     } else {
-      console.error(`Unknown error fetching product by ID: ${error}`);
+      console.error(`Error fetching product by ID: ${error}`);
     }
     return null;
   }
